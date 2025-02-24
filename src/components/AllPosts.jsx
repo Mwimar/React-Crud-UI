@@ -1,83 +1,89 @@
-import React from 'react'
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import {
-    Card,
-    Grid,
-    Typography,
-  } from "@mui/material";
-  import axios from "axios";
-  import { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import { Card, Grid, Typography, Box, IconButton } from "@mui/material";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Search = () => {
-    const [post, setPost] = useState(null);
+    const [post, setPost] = useState([]);
     const navigate = useNavigate();
-
-const handleEdit = (id) => {
-  navigate("/edit",{state:{id}});
-}
 
     useEffect(() => {
         const fetchInitialPosts = async () => {
-            const response = await axios.get(`http://localhost:8080/jobPosts`);
-            setPost(response.data);
+            try {
+                const response = await axios.get(`http://localhost:8080/jobPosts`);
+                setPost(response.data);
+            } catch (error) {
+                console.error("Error fetching job posts:", error);
+            }
+        };
+        fetchInitialPosts();
+    }, []);
+
+    const handleEdit = (id) => {
+        navigate("/edit", { state: { id } });
+    };
+
+    const handleDelete = async (id) => {
+        try {
+            await axios.delete(`http://localhost:8080/jobPost/${id}`);
+            setPost((prev) => prev.filter((p) => p.postId !== id)); // Optimistic UI update
+        } catch (error) {
+            console.error("Error deleting job post:", error);
         }
-         fetchInitialPosts();
-      }, []);
+    };
 
-      const handleDelete = (id) => {
-        async function deletePost() {
-          await axios.delete(`http://localhost:8080/jobPost/${id}`);
-          console.log("Delete")
-      }
-      deletePost();
-      window.location.reload();
-      }
+    return (
+        <Grid container spacing={3} sx={{ padding: "2%" }}>
+            {post.length > 0 ? (
+                post.map((p) => (
+                    <Grid key={p.postId} item xs={12} sm={6} md={4}>
+                        <Card
+                            sx={{
+                                padding: "5%",
+                                backgroundColor: "#2b2d42",
+                                color: "#e0e0e0",
+                                borderRadius: "12px",
+                                boxShadow: "0px 4px 10px rgba(0,0,0,0.3)",
+                                transition: "transform 0.3s",
+                                "&:hover": { transform: "scale(1.02)" },
+                            }}
+                        >
+                            <Typography variant="h5" sx={{ fontWeight: "bold", color: "#89cff0" }}>
+                                {p.postProfile}
+                            </Typography>
 
-  return (
-    <>
-      <Grid container spacing={2} sx={{ margin: "2%" }}>
-      <Grid item xs={12} sx={12} md={12} lg={12}>
-      </Grid>
-      {post &&
-        post.map((p) => {
-          return (
-            <Grid key={p.id} item xs={12} md={6} lg={4}>
-              <Card sx={{ padding: "3%", overflow: "hidden", width: "84%", backgroundColor:"#ADD8E6" }}>
-                <Typography        
-                  variant="h5"
-                  sx={{ fontSize: "2rem", fontWeight: "600", fontFamily:"sans-serif" }}
-                >
-             {p.postProfile}
-                </Typography>
-                <Typography  sx={{ color: "#585858", marginTop:"2%", fontFamily:"cursive" }} variant="body" >
-                  Description: {p.postDesc}
-                </Typography>
-                <br />
-                <br />
-                <Typography variant="h6" sx={{ fontFamily:"unset", fontSize:"400"}}>
-                  Experience: {p.reqExperience} years
-                </Typography>
-                <Typography sx={{fontFamily:"serif",fontSize:"400"}} gutterBottom  variant="body">Skills : </Typography>
-                {p.postTechStack.map((s, i) => {
-                  return (
-                    <Typography variant="body" gutterBottom key={i}>
-                      {s} .
-                      {` `}
-                    </Typography>
-                  );
-                })}
-               <DeleteIcon onClick={() => handleDelete(p.postId)} />
-                <EditIcon onClick={() => handleEdit(p.postId)} />
-              </Card>
-            </Grid>
-          );
-        })}
-    </Grid>
-    </>
- 
-  )
-}
+                            <Typography sx={{ color: "#b0b0b0", marginTop: "1rem" }}>
+                                <strong>Description:</strong> {p.postDesc}
+                            </Typography>
 
-export default Search
+                            <Typography sx={{ marginTop: "1rem" }}>
+                                <strong>Experience:</strong> {p.reqExperience} years
+                            </Typography>
+
+                            <Typography sx={{ marginTop: "1rem" }}>
+                                <strong>Skills:</strong> {p.postTechStack.join(", ")}
+                            </Typography>
+
+                            <Box sx={{ display: "flex", justifyContent: "flex-end", marginTop: "1rem" }}>
+                                <IconButton onClick={() => handleEdit(p.postId)} sx={{ color: "#89cff0", "&:hover": { color: "#ffffff" } }}>
+                                    <EditIcon />
+                                </IconButton>
+                                <IconButton onClick={() => handleDelete(p.postId)} sx={{ color: "#ff6961", "&:hover": { color: "#ff0000" } }}>
+                                    <DeleteIcon />
+                                </IconButton>
+                            </Box>
+                        </Card>
+                    </Grid>
+                ))
+            ) : (
+                <Typography variant="h6" sx={{ textAlign: "center", color: "#b0b0b0", width: "100%" }}>
+                    No job posts available
+                </Typography>
+            )}
+        </Grid>
+    );
+};
+
+export default Search;

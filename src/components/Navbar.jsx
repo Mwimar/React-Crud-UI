@@ -1,42 +1,66 @@
-import React from 'react'
-import {
-    AppBar,
-    Toolbar,
-    Box,
-    Grid,
-    Typography,
-    Button,
-  } from "@mui/material";
-  
+import React from "react";
+import { AppBar, Toolbar, Box, Typography, Button, Container } from "@mui/material";
 
 const Navbar = () => {
-  return (
-    <div>
-      <Grid container spacing={2} sx={{ margin: "2%" }}>
-        <Box sx={{ flexGrow: 1 }}>
-          <AppBar position="static" style={{ background: '#ADD8E6' }}>
-            <Toolbar variant="dense">
-              <Typography variant="h4" align='Left' component="div" sx={{ flexGrow: 1, fontFamily:"revert", fontSize:"500", color:"black" }}>
-                Job Portal
-              </Typography>
+    return (
+        <AppBar position="static" sx={{ backgroundColor: "#2b2d42", padding: "0.5rem" }}>
+            <Container maxWidth="lg">
+                <Toolbar>
+                    {/* Logo / Title */}
+                    <Typography
+                        variant="h5"
+                        sx={{
+                            flexGrow: 1,
+                            fontWeight: "bold",
+                            color: "#89cff0",
+                            fontFamily: "sans-serif",
+                        }}
+                    >
+                        Job Portal
+                    </Typography>
 
-              <Box sx={{ m: 0.5, mx: 'auto', width: 80 }}>
-                <Button variant="outlined" href='http://localhost:3000'>Home</Button>
-               </Box>
-              <Box sx={{ m: 0.5, mx: 'auto', width: 100 }}>
-                <Button variant="outlined" href='http://localhost:3000/create'>Add Job</Button>
-              </Box>
-              <Box sx={{ m: 0.5, mx: 'auto', width: 180 }}>
-                <Button variant="outlined" href='https://telusko.com/'>Contact Us</Button>
-               </Box>
-        </Toolbar>
-      </AppBar>
-    </Box>
-    </Grid>
-      <Grid item xs={12} sx={12} md={12} lg={12}>
-      </Grid>
-    </div>
-  )
-}
+                    {/* Navigation Buttons */}
+                    <Box sx={{ display: "flex", gap: "1rem" }}>
+                        <Button
+                            variant="outlined"
+                            href="http://localhost:3000"
+                            sx={{
+                                color: "#ffffff",
+                                borderColor: "#89cff0",
+                                "&:hover": { backgroundColor: "#89cff0", color: "#2b2d42" },
+                            }}
+                        >
+                            Home
+                        </Button>
 
-export default Navbar
+                        <Button
+                            variant="outlined"
+                            href="http://localhost:3000/create"
+                            sx={{
+                                color: "#ffffff",
+                                borderColor: "#89cff0",
+                                "&:hover": { backgroundColor: "#89cff0", color: "#2b2d42" },
+                            }}
+                        >
+                            Add Job
+                        </Button>
+
+                        <Button
+                            variant="outlined"
+                            href="https://github.com/Mwimar"
+                            sx={{
+                                color: "#ffffff",
+                                borderColor: "#89cff0",
+                                "&:hover": { backgroundColor: "#89cff0", color: "#2b2d42" },
+                            }}
+                        >
+                            Contact Us
+                        </Button>
+                    </Box>
+                </Toolbar>
+            </Container>
+        </AppBar>
+    );
+};
+
+export default Navbar;
